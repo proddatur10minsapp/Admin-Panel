@@ -6,7 +6,7 @@ import * as AdminJSMongoose from "@adminjs/mongoose";
 import * as Modals from "./models/index.js";
 
 // Connect to MongoDB
-await mongoose.connect("mongodb://localhost:27017/products_db", {
+await mongoose.connect("mongodb+srv://root:root@productor10minsapp.92asf.mongodb.net/?retryWrites=true&w=majority&appName=productor10minsapp", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
