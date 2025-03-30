@@ -1,21 +1,22 @@
 import mongoose from "mongoose";
+import Counter from "./count.js";
 
+// Order Schema
 const orderSchema = new mongoose.Schema({
   orderId: {
-    type: String,
+    type: Number,
     unique: true,
-    default: () => `ORDR${Date.now()}`,
   },
   customer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Customer",
     required: true,
   },
-  deliveryLocation : {
-    doorNumber: {type : Number, required : true},
-    landmark : {type : String , required : true},
-    address: { type: String, required : true},
-    AddressMode : {type : String, enum: ["Work", "Home", "other"]} 
+  deliveryLocation: {
+    doorNumber: { type: Number, required: true },
+    landmark: { type: String, required: true },
+    address: { type: String, required: true },
+    AddressMode: { type: String, enum: ["Work", "Home", "other"] },
   },
   items: [
     {
@@ -35,6 +36,23 @@ const orderSchema = new mongoose.Schema({
   totalPrice: { type: Number, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+});
+
+// Pre-save hook to auto-increment orderId
+orderSchema.pre("save", async function (next) {
+  if (!this.orderId) {
+    try {
+      const counter = await Counter.findOneAndUpdate(
+        { name: "orderId" },
+        { $inc: { value: 1 } },
+        { new: true, upsert: true }
+      );
+      this.orderId = counter.value;
+    } catch (err) {
+      return next(err);
+    }
+  }
+  next();
 });
 
 const Order = mongoose.model("Order", orderSchema);
