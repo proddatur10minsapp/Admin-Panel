@@ -8,7 +8,7 @@ import * as Models from "./models/index.js"; // Ensure correct path
 // Connect to MongoDB
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb+srv://Manish:Manish1234@proddatur10minapp.ceto8xz.mongodb.net/?retryWrites=true&w=majority&appName=Proddatur10minapp", {
+    await mongoose.connect("mongodb+srv://Manish:Suvarna@cluster.f2upph3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -75,6 +75,6 @@ const app = express();
 const adminRouter = AdminJSExpress.buildRouter(admin);
 app.use(admin.options.rootPath, adminRouter);
 
-app.listen(3000, () => {
-  console.log("🚀 Admin Panel running at http://localhost:3000/admin");
+app.listen(2025, () => {
+  console.log("🚀 Admin Panel running at http://localhost:2025/admin");
 });
