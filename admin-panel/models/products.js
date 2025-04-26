@@ -15,7 +15,7 @@ const productSchema = new mongoose.Schema({
   },
 });
 
-// ✅ Pre-save Hook to Validate Category-Subcategory Relationship
+// ✅ Pre-save Hook to Validate Category-Subcategory
 productSchema.pre("save", async function (next) {
   if (!this.productId) {
     try {
