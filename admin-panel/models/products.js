@@ -8,6 +8,7 @@ const productSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   discountPrice: { type: Number, required: true },
   quantity: { type: String, required: true },
+  description: { type: String }
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
