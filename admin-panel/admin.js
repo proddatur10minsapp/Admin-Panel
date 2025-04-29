@@ -57,15 +57,7 @@ const admin = new AdminJS({
           orderId: { isDisabled: true, isVisible: { list: true, show: true, edit: false, filter: true } },
         },
       },
-    },
-    {
-      resource: Models.Customer,
-      options: {
-        properties: {
-          custId: { isDisabled: true, isVisible: { list: true, show: true, edit: false, filter: true } },
-        },
-      },
-    },
+    }
   ],
   rootPath: "/admin",
 });
