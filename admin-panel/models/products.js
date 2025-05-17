@@ -4,7 +4,8 @@ import Counter from "./count.js";
 const productSchema = new mongoose.Schema({
   productId: { type: Number, unique: true },
   name: { type: String, required: true },
-  image: { type: String, required: true },
+  image: { type: String, required: true }, // primary image
+  gallery: [{ type: String }], // ✅ array of secondary images
   price: { type: Number, required: true },
   discountPrice: { type: Number, required: true },
   quantity: { type: String, required: true },
