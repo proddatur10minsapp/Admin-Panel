@@ -57,7 +57,68 @@ const admin = new AdminJS({
           orderId: { isDisabled: true, isVisible: { list: true, show: true, edit: false, filter: true } },
         },
       },
-    }
+    },
+    {
+      resource: Models.User,
+      options: {
+        properties: {
+          _id: { isVisible: false },
+          userName: { isTitle: true, required: true },
+          phoneNumber: { required: true },
+          address: { isVisible: false }, // hide the raw address object
+        },
+        actions: {
+          new: { isAccessible: false },     // Disable create
+          edit: { isAccessible: false },    // Disable edit
+          delete: { isAccessible: false },  // Disable delete
+          bulkDelete: { isAccessible: false }, // Disable bulk delete
+          list: { isAccessible: true },     // Allow listing
+          show: { isAccessible: true },     // Allow viewing single record
+        },
+      },
+    },
+    {
+      resource: Models.Address,
+      options: {
+        properties: {
+          _id: {
+            isVisible: { list: true, show: true, edit: false, filter: true },
+            isTitle: true, // To show _id as the title since it's the UUID string
+          },
+          phoneNumber: {
+            isRequired: true,
+            type: "string",
+          },
+          type: {
+            type: "string",
+            isVisible: { list: true, show: true, edit: true, filter: true },
+          },
+          areaOrStreet: {
+            type: "string",
+            isVisible: { list: true, show: true, edit: true, filter: true },
+          },
+          landmark: {
+            type: "string",
+            isVisible: { list: true, show: true, edit: true, filter: true },
+          },
+          isDefault: {
+            type: "boolean",
+            isVisible: { list: true, show: true, edit: true, filter: true },
+          },
+          _class: {
+            isVisible: false, // Usually hide metadata fields like _class
+          },
+        },
+        actions: {
+          new: { isAccessible: false },     // Disable create
+          edit: { isAccessible: false },    // Disable edit
+          delete: { isAccessible: false },  // Disable delete
+          bulkDelete: { isAccessible: false }, // Disable bulk delete
+          list: { isAccessible: true },     // Allow listing
+          show: { isAccessible: true },     // Allow viewing single record
+        },
+      },
+    },
   ],
   rootPath: "/admin",
 });
