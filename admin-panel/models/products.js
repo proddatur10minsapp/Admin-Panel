@@ -12,7 +12,7 @@ const productSchema = new mongoose.Schema({
   description: { type: String },
   keyfeatures: { type: String },
   specifications: { type: String },
-  stock: { type: String },
+  stock: { type: String, required: true },
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
