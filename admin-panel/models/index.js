@@ -3,6 +3,7 @@ import Category from "./category.js";
 import Order from "./order.js";
 import User from "./user.js";
 import Address from "./address.js";
+import TrendCategory from "./trendCategory.js";
 
 
 export {
@@ -11,4 +12,5 @@ export {
   Order,
   User,
   Address,
+  TrendCategory,
 };
