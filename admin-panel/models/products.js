@@ -10,6 +10,9 @@ const productSchema = new mongoose.Schema({
   discountPrice: { type: Number, required: true },
   quantity: { type: String, required: true },
   description: { type: String },
+  keyfeatures: { type: String },
+  specifications: { type: String },
+  stock: { type: String },
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
