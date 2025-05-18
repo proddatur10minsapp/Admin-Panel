@@ -119,6 +119,43 @@ const admin = new AdminJS({
         },
       },
     },
+    {
+      resource: Models.TrendCategory,
+      options: {
+        properties: {
+          categoryId: {
+            isDisabled: true, // auto-filled
+            isVisible: { list: true, show: true, edit: false, filter: true },
+          },
+          categoryName: {
+            reference: "Category", // shows dropdown of categories
+            isVisible: { list: true, show: true, edit: true, filter: true },
+          },
+          backgroundImage: {
+            type: "string",
+            isVisible: { list: true, show: true, edit: true, filter: true },
+          },
+        },
+        actions: {
+          new: {
+            before: async (request) => {
+              if (request.payload?.categoryName) {
+                const category = await Models.Category.findById(request.payload.categoryName);
+                if (category) {
+                  request.payload = {
+                    ...request.payload,
+                    categoryId: category.categoryId,
+                  };
+                } else {
+                  throw new Error("Invalid category selected.");
+                }
+              }
+              return request;
+            },
+          },
+        },
+      },
+    }
   ],
   rootPath: "/admin",
 });
