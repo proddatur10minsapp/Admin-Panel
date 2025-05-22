@@ -123,18 +123,30 @@ const admin = new AdminJS({
       resource: Models.TrendCategory,
       options: {
         properties: {
-          categoryId: {
-            isDisabled: true, // auto-filled
-            isVisible: { list: true, show: true, edit: false, filter: true },
-          },
-          categoryName: {
-            reference: "Category", // shows dropdown of categories
+          category: {
+            reference: "Category",
             isVisible: { list: true, show: true, edit: true, filter: true },
           },
           backgroundImage: {
             type: "string",
             isVisible: { list: true, show: true, edit: true, filter: true },
           },
+          priority: {
+            type: "number",
+            isVisible: { list: true, show: true, edit: true, filter: true },
+            availableValues: [
+              { value: 1, label: "1" },
+              { value: 2, label: "2" },
+              { value: 3, label: "3" },
+              { value: 4, label: "4" },
+              { value: 5, label: "5" },
+              { value: 6, label: "6" },
+              { value: 7, label: "7" },
+              { value: 8, label: "8" },
+              { value: 9, label: "9" },
+              { value: 10, label: "10" },
+            ]
+          }
         },
         actions: {
           new: {
