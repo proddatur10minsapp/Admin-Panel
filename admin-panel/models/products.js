@@ -12,7 +12,7 @@ const productSchema = new mongoose.Schema({
   description: { type: String },
   keyFeatures: { type: String },
   specifications: { type: String },
-  stock: { type: Number, required: true },
+  stock: { type: String, required: true },
   // ✅ These will be auto-added with defaults if not provided
   isPresentInCart: { type: Boolean, default: false },
   quantityInCart: { type: Number, default: 0 },

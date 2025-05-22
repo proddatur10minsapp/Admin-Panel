@@ -29,27 +29,15 @@ AdminJS.registerAdapter(AdminJSMongoose);
 // Admin Panel Configuration
 const admin = new AdminJS({
   resources: [
-   {
+    {
       resource: Models.Product,
       options: {
         properties: {
-          productId: {
-            isDisabled: true,
-            isVisible: { list: true, show: true, edit: false, filter: true },
-          },
+          productId: { isDisabled: true, isVisible: { list: true, show: true, edit: false, filter: true } },
           category: {
             type: "reference",
             reference: "Category",
             isVisible: { list: true, show: true, edit: true, filter: true },
-          },
-          isPresentInCart: {
-            isVisible: { list: false, show: false, edit: false, filter: false },
-          },
-          quantityInCart: {
-            isVisible: { list: false, show: false, edit: false, filter: false },
-          },
-          isPresentInWishList: {
-            isVisible: { list: false, show: false, edit: false, filter: false },
           },
         },
       },
