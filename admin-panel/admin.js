@@ -127,6 +127,9 @@ const admin = new AdminJS({
             reference: "Category",
             isVisible: { list: true, show: true, edit: true, filter: true },
           },
+          categoryName: {
+            isVisible: false, // Hide categoryName from admin input
+          },
           backgroundImage: {
             type: "string",
             isVisible: { list: true, show: true, edit: true, filter: true },
@@ -151,21 +154,22 @@ const admin = new AdminJS({
         actions: {
           new: {
             before: async (request) => {
-              if (request.payload?.categoryName) {
-                const category = await Models.Category.findById(request.payload.categoryName);
-                if (category) {
-                  request.payload = {
-                    ...request.payload,
-                    categoryId: category.categoryId,
-                  };
-                } else {
+              const categoryId = request.payload?.category;
+              if (categoryId) {
+                const categoryDoc = await Models.Category.findById(categoryId);
+                if (!categoryDoc) {
                   throw new Error("Invalid category selected.");
                 }
+                request.payload = {
+                  ...request.payload,
+                  categoryName: categoryDoc.name,
+                };
               }
               return request;
             },
           },
-        },
+        }
+
       },
     }
   ],
