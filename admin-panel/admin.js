@@ -171,6 +171,19 @@ const admin = new AdminJS({
         }
 
       },
+    },
+    {
+      resource: Models.DeliveryFee,
+      options: {
+        properties: {
+          _id: { isVisible: false }, // Hide internal MongoDB _id
+          DeliveryFee: {
+            type: "number",
+            isRequired: true,
+            isVisible: { list: true, show: true, edit: true, filter: true },
+          },
+        },
+      },
     }
   ],
   rootPath: "/admin",
