@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
-import Counter from "./count.js";
 
 const productSchema = new mongoose.Schema({
-  productId: { type: Number, unique: true },
   name: { type: String, required: true },
   image: { type: String, required: true }, // primary image
   gallery: [{ type: String }], // ✅ array of secondary images
@@ -20,23 +18,6 @@ const productSchema = new mongoose.Schema({
   },
 });
 
-// ✅ Pre-save Hook to Validate Category-Subcategory
-productSchema.pre("save", async function (next) {
-  if (!this.productId) {
-    try {
-      const counter = await Counter.findOneAndUpdate(
-        { name: "productId" },
-        { $inc: { value: 1 } },
-        { new: true, upsert: true }
-      );
-      this.productId = counter.value;
-    } catch (err) {
-      return next(err);
-    }
-  }
-
-  next();
-});
 
 const Product = mongoose.model("Product", productSchema);
 export default Product;
