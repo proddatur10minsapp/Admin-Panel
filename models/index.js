@@ -4,6 +4,7 @@ import User from "./user.js";
 import Address from "./address.js";
 import TrendCategory from "./trendCategory.js";
 import DeliveryFee from "./deliveryfee.js";
+import Banner from './banner.js'
 
 
 export {
@@ -13,4 +14,5 @@ export {
   Address,
   TrendCategory,
   DeliveryFee,
+  Banner
 };
