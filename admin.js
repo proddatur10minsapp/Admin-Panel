@@ -33,6 +33,7 @@ const admin = new AdminJS({
       resource: Models.Product,
       options: {
         properties: {
+          productId: { isDisabled: true, isVisible: { list: true, show: true, edit: false, filter: true } },
           category: {
             type: "reference",
             reference: "Category",
@@ -45,11 +46,15 @@ const admin = new AdminJS({
       resource: Models.Category,
       options: {
         properties: {
-          groupName: {
-            type: "string",
-            isVisible: { list: true, show: true, edit: true, filter: true },
-            isRequired: true,
-          },
+          categoryId: { isDisabled: true, isVisible: { list: true, show: true, edit: false, filter: true } },
+        },
+      },
+    },
+    {
+      resource: Models.Order,
+      options: {
+        properties: {
+          orderId: { isDisabled: true, isVisible: { list: true, show: true, edit: false, filter: true } },
         },
       },
     },
