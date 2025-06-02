@@ -6,10 +6,11 @@
         "@adminjs/bundler": "^3.0.0",
         "@adminjs/express": "^6.1.1",
         "@adminjs/mongoose": "^4.1.0",
+        "adminjs": "^7.8.16",
         "cors": "^2.8.5",
         "dotenv": "^16.4.7",
         "express": "^4.21.2",
-        "mongoose": "^8.12.1",
+        "mongoose": "^8.15.1",
         "mongoose-sequence": "^6.0.1",
         "path": "^0.12.7"
     },
