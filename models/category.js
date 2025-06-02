@@ -5,6 +5,7 @@ const categorySchema = new mongoose.Schema({
   categoryId: { type: Number, unique: true },
   name: { type: String, required: true },
   image: { type: String, required: true },
+  groupName: { type: String, required: true },
 });
 
 // Auto-increment categoryId

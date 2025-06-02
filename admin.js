@@ -47,6 +47,11 @@ const admin = new AdminJS({
       options: {
         properties: {
           categoryId: { isDisabled: true, isVisible: { list: true, show: true, edit: false, filter: true } },
+            groupName: {
+            type: "string",
+            isVisible: { list: true, show: true, edit: true, filter: true },
+            isRequired: true,
+          },
         },
       },
     },
@@ -184,7 +189,40 @@ const admin = new AdminJS({
           },
         },
       },
-    }
+    },
+    {
+      resource: Models.Banner,
+      options: {
+        properties: {
+          image: {
+            type: "string",
+            isRequired: true,
+            isVisible: { list: true, show: true, edit: true, filter: true },
+          },
+          priority: {
+            type: "number",
+            isRequired: true,
+            availableValues: Array.from({ length: 20 }, (_, i) => ({
+              value: i + 1,
+              label: `${i + 1}`,
+            })),
+            isVisible: { list: true, show: true, edit: true, filter: true },
+          },
+          type: {
+            type: "string",
+            isRequired: true,
+            availableValues: [
+              { value: "Banner", label: "Banner" },
+              { value: "Sponsorship", label: "Sponsorship" },
+            ],
+            isVisible: { list: true, show: true, edit: true, filter: true },
+          },
+          createdAt: { isVisible: { list: true, show: true, edit: false } },
+          updatedAt: { isVisible: { list: true, show: true, edit: false } },
+          _id: { isVisible: false }, // Optional: hide MongoDB ID
+        },
+      },
+    },
   ],
   rootPath: "/admin",
 });
