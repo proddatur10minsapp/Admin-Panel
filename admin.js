@@ -194,6 +194,13 @@ const admin = new AdminJS({
       resource: Models.Banner,
       options: {
         properties: {
+          category: {
+            reference: "Category",
+            isVisible: { list: true, show: true, edit: true, filter: true },
+          },
+          categoryName: {
+            isVisible: false, // Hide categoryName from admin input
+          },
           image: {
             type: "string",
             isRequired: true,
@@ -221,6 +228,24 @@ const admin = new AdminJS({
           updatedAt: { isVisible: { list: true, show: true, edit: false } },
           _id: { isVisible: false }, // Optional: hide MongoDB ID
         },
+          actions: {
+          new: {
+            before: async (request) => {
+              const categoryId = request.payload?.category;
+              if (categoryId) {
+                const categoryDoc = await Models.Category.findById(categoryId);
+                if (!categoryDoc) {
+                  throw new Error("Invalid category selected.");
+                }
+                request.payload = {
+                  ...request.payload,
+                  categoryName: categoryDoc.name,
+                };
+              }
+              return request;
+            },
+          },
+        }
       },
     },
   ],

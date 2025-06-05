@@ -17,6 +17,15 @@ const bannerSponsorshipSchema = new mongoose.Schema(
       required: true,
       enum: ["Banner", "Sponsorship"],
     },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+    categoryName: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt fields
