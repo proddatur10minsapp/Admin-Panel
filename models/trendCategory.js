@@ -6,37 +6,39 @@ const trendCategorySchema = new mongoose.Schema({
     ref: "Category",
     required: true,
   },
-  categoryName: {
-    type: String,
-    required: true,
-  },
-  backgroundImage: {
-    type: String,
-    required: true,
-  },
+  // ── COPIED FROM Category ───────────────────────────────
+  categoryName: { type: String, required: true },
+  groupName:    { type: String, required: true },   //  ← new
+  // groupImage: { type: String, required: true },   //  ← add if you need it
+  // ───────────────────────────────────────────────────────
+  backgroundImage: { type: String, required: true },
   priority: {
     type: Number,
-    enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    required: true,
+    enum:  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     unique: true,
+    required: true,
   },
 });
 
-// Automatically set categoryName based on referenced Category
+/* ───────────────  PRE-SAVE HOOK  ──────────────── */
 trendCategorySchema.pre("save", async function (next) {
-  if (this.isModified("category")) {
-    try {
-      const Category = mongoose.model("Category");
-      const categoryDoc = await Category.findById(this.category);
-      if (!categoryDoc) {
-        return next(new Error("Invalid category reference."));
-      }
-      this.categoryName = categoryDoc.name;
-    } catch (err) {
-      return next(err);
-    }
+  // Only run when the referenced category changes or on a new doc
+  if (!this.isModified("category")) return next();
+
+  try {
+    const Category = mongoose.model("Category");
+    // Only fetch the fields we need
+    const cat = await Category.findById(this.category).select("name groupName groupImage");
+    if (!cat) return next(new Error("Invalid category reference."));
+
+    // Copy the values
+    this.categoryName = cat.name;
+    this.groupName    = cat.groupName;
+    // this.groupImage = cat.groupImage;   // uncomment if you added groupImage
+    return next();
+  } catch (err) {
+    return next(err);
   }
-  next();
 });
 
 const TrendCategory =
