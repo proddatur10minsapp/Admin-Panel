@@ -5,6 +5,25 @@ import * as AdminJSExpress from "@adminjs/express";
 import * as AdminJSMongoose from "@adminjs/mongoose";
 import * as Models from "./models/index.js"; // Ensure correct path
 
+    /* ──────────── SHARED HOOK ──────────── */
+    async function syncNamesFromCategory(request) {
+      const categoryId = request?.payload?.category;
+      if (!categoryId) return request;
+
+      const cat = await Models.Category.findById(categoryId)
+        .select('name groupName')
+        .lean();
+      if (!cat) throw new Error('Invalid category selected.');
+
+      request.payload = {
+        ...request.payload,
+        categoryName: cat.name,
+        groupName: cat.groupName,
+      };
+
+      return request;
+    }
+
 // Connect to MongoDB
 const connectDB = async () => {
   try {
@@ -132,49 +151,34 @@ const admin = new AdminJS({
             reference: "Category",
             isVisible: { list: true, show: true, edit: true, filter: true },
           },
-          categoryName: {
-            isVisible: false, // Hide categoryName from admin input
-          },
+          /* ───────── AUTO-FILLED FIELDS ───────── */
+          categoryName: { isVisible: false }, // filled by hook
+          groupName: { isVisible: false }, // ← NEW: filled by hook
+
+          /* ───────── USER-EDITABLE FIELDS ───────── */
           backgroundImage: {
-            type: "string",
+            type: 'string',
             isVisible: { list: true, show: true, edit: true, filter: true },
           },
           priority: {
-            type: "number",
+            type: 'number',
             isVisible: { list: true, show: true, edit: true, filter: true },
-            availableValues: [
-              { value: 1, label: "1" },
-              { value: 2, label: "2" },
-              { value: 3, label: "3" },
-              { value: 4, label: "4" },
-              { value: 5, label: "5" },
-              { value: 6, label: "6" },
-              { value: 7, label: "7" },
-              { value: 8, label: "8" },
-              { value: 9, label: "9" },
-              { value: 10, label: "10" },
-            ]
-          }
+            availableValues: Array.from({ length: 10 }, (_, i) => ({
+              value: i + 1,
+              label: String(i + 1),
+            })),
+          },
         },
+
+        /* ───────── ACTION HOOKS ───────── */
         actions: {
           new: {
-            before: async (request) => {
-              const categoryId = request.payload?.category;
-              if (categoryId) {
-                const categoryDoc = await Models.Category.findById(categoryId);
-                if (!categoryDoc) {
-                  throw new Error("Invalid category selected.");
-                }
-                request.payload = {
-                  ...request.payload,
-                  categoryName: categoryDoc.name,
-                };
-              }
-              return request;
-            },
+            before: syncNamesFromCategory,
           },
-        }
-
+          edit: {
+            before: syncNamesFromCategory, // keep data consistent on edits too
+          },
+        },
       },
     },
     {
