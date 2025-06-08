@@ -24,6 +24,27 @@ import * as Models from "./models/index.js"; // Ensure correct path
       return request;
     }
 
+    /* Helper shared by both actions */
+async function copyCategoryFields(request) {
+  const categoryId = request.payload?.category;
+  if (categoryId) {
+    const categoryDoc = await Models.Category
+      .findById(categoryId)
+      .select("name groupName groupImage");
+
+    if (!categoryDoc)
+      throw new Error("Invalid category selected.");
+
+    request.payload = {
+      ...request.payload,
+      categoryName: categoryDoc.name,
+      groupName   : categoryDoc.groupName,
+      // groupImage : categoryDoc.groupImage,   // uncomment if you exposed it
+    };
+  }
+  return request;
+}
+
 // Connect to MongoDB
 const connectDB = async () => {
   try {
@@ -194,64 +215,74 @@ const admin = new AdminJS({
         },
       },
     },
-    {
-      resource: Models.Banner,
-      options: {
-        properties: {
-          category: {
-            reference: "Category",
-            isVisible: { list: true, show: true, edit: true, filter: true },
-          },
-          categoryName: {
-            isVisible: false, // Hide categoryName from admin input
-          },
-          image: {
-            type: "string",
-            isRequired: true,
-            isVisible: { list: true, show: true, edit: true, filter: true },
-          },
-          priority: {
-            type: "number",
-            isRequired: true,
-            availableValues: Array.from({ length: 20 }, (_, i) => ({
-              value: i + 1,
-              label: `${i + 1}`,
-            })),
-            isVisible: { list: true, show: true, edit: true, filter: true },
-          },
-          type: {
-            type: "string",
-            isRequired: true,
-            availableValues: [
-              { value: "Banner", label: "Banner" },
-              { value: "Sponsorship", label: "Sponsorship" },
-            ],
-            isVisible: { list: true, show: true, edit: true, filter: true },
-          },
-          createdAt: { isVisible: { list: true, show: true, edit: false } },
-          updatedAt: { isVisible: { list: true, show: true, edit: false } },
-          _id: { isVisible: false }, // Optional: hide MongoDB ID
-        },
-          actions: {
-          new: {
-            before: async (request) => {
-              const categoryId = request.payload?.category;
-              if (categoryId) {
-                const categoryDoc = await Models.Category.findById(categoryId);
-                if (!categoryDoc) {
-                  throw new Error("Invalid category selected.");
-                }
-                request.payload = {
-                  ...request.payload,
-                  categoryName: categoryDoc.name,
-                };
-              }
-              return request;
-            },
-          },
-        }
+  {
+  resource: Models.Banner,   // or Models.Banner
+  options : {
+    /* ───────────────────────────  FIELD VISIBILITY  ────────────────────────── */
+    properties: {
+      // — Foreign-key —
+      category: {
+        reference : "Category",
+        isVisible : { list: true, show: true, edit: true, filter: true },
+      },
+
+      // — Denormalised category data —
+      categoryName: {                     // copied from Category.name
+        isVisible : { list: true, show: true, edit: false, filter: true },
+      },
+      groupName: {                        // copied from Category.groupName
+        isVisible : { list: true, show: true, edit: false, filter: true },
+      },
+      /* If you added groupImage in the schema, keep it read-only too
+      groupImage: {
+        isVisible : { list: true, show: true, edit: false, filter: true },
+        components: { list: AdminJS.bundle('./components/ImageThumb') },
+      },
+      */
+
+      // — Regular fields —
+      image: {
+        type      : "string",
+        isRequired: true,
+        isVisible : { list: true, show: true, edit: true, filter: true },
+      },
+      priority: {
+        type      : "number",
+        isRequired: true,
+        availableValues: Array.from({ length: 20 }, (_, i) => ({
+          value: i + 1,
+          label: `${i + 1}`,
+        })),
+        isVisible : { list: true, show: true, edit: true, filter: true },
+      },
+      type: {
+        type      : "string",
+        isRequired: true,
+        availableValues: [
+          { value: "Banner",       label: "Banner" },
+          { value: "Sponsorship",  label: "Sponsorship" },
+        ],
+        isVisible : { list: true, show: true, edit: true, filter: true },
+      },
+
+      createdAt: { isVisible: { list: true, show: true, edit: false } },
+      updatedAt: { isVisible: { list: true, show: true, edit: false } },
+      _id      : { isVisible: false },
+    },
+
+    /* ───────────────────────────────  ACTIONS  ─────────────────────────────── */
+    actions: {
+      /* Create */
+      new: {
+        before: async (request) => copyCategoryFields(request),
+      },
+      /* Update (needed if admin changes the category) */
+      edit: {
+        before: async (request) => copyCategoryFields(request),
       },
     },
+  },
+},
   ],
   rootPath: "/admin",
 });
