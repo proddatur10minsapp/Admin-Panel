@@ -2,35 +2,57 @@ import mongoose from "mongoose";
 
 const bannerSponsorshipSchema = new mongoose.Schema(
   {
-    image: {
-      type: String,
-      required: true,
-    },
+    /* ────── File/Image & Display ────── */
+    image:    { type: String, required: true },
     priority: {
       type: Number,
-      required: true,
-      enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15,16,17,18,19,20], 
+      enum:   [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+               11,12,13,14,15,16,17,18,19,20],
       unique: true,
+      required: true,
     },
     type: {
       type: String,
-      required: true,
       enum: ["Banner", "Sponsorship"],
+      required: true,
     },
+
+    /* ────── Category linkage ────── */
     category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
+      ref:  "Category",
       required: true,
     },
-    categoryName: {
-      type: String,
-      required: true,
-    },
+
+    /* ────── COPIED-FROM-CATEGORY ────── */
+    categoryName: { type: String, required: true },
+    groupName:    { type: String, required: true },   // ← NEW
+    // groupImage: { type: String, required: true },   // ← add if you need it
   },
-  {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
-  }
+  { timestamps: true }
 );
+
+/* ───────────────  PRE-SAVE HOOK  ──────────────── */
+bannerSponsorshipSchema.pre("save", async function (next) {
+  // Only run when the referenced category changes or on a new doc
+  if (!this.isModified("category")) return next();
+
+  try {
+    const Category = mongoose.model("Category");
+    // Only fetch the fields we need
+    const cat = await Category.findById(this.category)
+                              .select("name groupName groupImage");
+    if (!cat) return next(new Error("Invalid category reference."));
+
+    // Copy the values
+    this.categoryName = cat.name;
+    this.groupName    = cat.groupName;
+    // this.groupImage = cat.groupImage;   // uncomment if you added groupImage
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+});
 
 const BannerSponsorship =
   mongoose.models.BannerSponsorship ||
