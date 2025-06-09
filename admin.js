@@ -73,11 +73,17 @@ const admin = new AdminJS({
       resource: Models.Product,
       options: {
         properties: {
-          productId: { isDisabled: true, isVisible: { list: true, show: true, edit: false, filter: true } },
+          productId: {
+            isDisabled: true,
+            isVisible: { list: true, show: true, edit: false, filter: true },
+          },
           category: {
             type: "reference",
             reference: "Category",
             isVisible: { list: true, show: true, edit: true, filter: true },
+          },
+          groupName: {
+            isVisible: { list: true, show: true, edit: false, filter: true, new: false },
           },
         },
       },
