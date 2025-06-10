@@ -105,7 +105,94 @@ const admin = new AdminJS({
       resource: Models.Order,
       options: {
         properties: {
-          orderId: { isDisabled: true, isVisible: { list: true, show: true, edit: false, filter: true } },
+          // 🆔 Order Info
+          _id: {
+            isTitle: true,
+            isVisible: { list: true, show: true, edit: false },
+            label: 'Order ID',
+          },
+          'OrdersCartDTO': {
+            isVisible: { list: false, show: true, edit: false },
+          },
+
+          // 🛒 Cart Summary
+          'OrdersCartDTO.totalItemsInCart': { isVisible: { show: true, list: true } },
+          'OrdersCartDTO.totalPrice': { isVisible: { show: true, list: true } },
+          'OrdersCartDTO.discountedAmount': { isVisible: { show: true, list: true } },
+          'OrdersCartDTO.phoneNumber': { isVisible: false },
+          'OrdersCartDTO.updatedAt': { isVisible: false },
+          'OrdersCartDTO.totalCurrentPrice': { isVisible: false },
+
+          // 🧾 Products in Cart
+          'OrdersCartDTO.productsList': {
+            isVisible: { list: false, show: true, edit: false },
+            label: 'Products in Cart',
+          },
+          'OrdersCartDTO.productsList.image': { isVisible: false },
+          'OrdersCartDTO.productsList.category': { isVisible: false },
+          'OrdersCartDTO.productsList.updatedAt': { isVisible: false },
+          'OrdersCartDTO.productsList.totalCurrentPrice': { isVisible: false },
+          'OrdersCartDTO.productsList.isProductAvailable': { isVisible: false },
+          'OrdersCartDTO.productsList.totalDiscountedAmount': { isVisible: false },
+          'OrdersCartDTO.productsList.discountPercentage': { isVisible: false },
+
+          'OrdersCartDTO.productsList.productName': { isVisible: { show: true }, label: 'Product Name' },
+          'OrdersCartDTO.productsList.categoryName': { isVisible: { show: true }, label: 'Category' },
+          'OrdersCartDTO.productsList.quantity': { isVisible: { show: true }, label: 'Quantity' },
+          'OrdersCartDTO.productsList.price': { isVisible: { show: true }, label: 'Original Price' },
+          'OrdersCartDTO.productsList.discountedPrice': { isVisible: { show: true }, label: 'Discounted Price' },
+          'OrdersCartDTO.productsList.totalPrice': { isVisible: { show: true }, label: 'Total Final Price' },
+
+          'deliveryAddress': {
+            isVisible: { list: false, show: false, edit: false },
+          },
+          // 📍 Delivery Address
+          'deliveryAddress.type': { isVisible: { show: true }, label: 'Address Type' },
+          'deliveryAddress.areaOrStreet': { isVisible: { show: true }, label: 'Street / Area' },
+          'deliveryAddress.landmark': { isVisible: { show: true }, label: 'Landmark' },
+          'deliveryAddress.pincode': { isVisible: { show: true }, label: 'PIN Code' },
+          'deliveryAddress.phoneNumber': { isVisible: false },
+          'deliveryAddress.isDefault': { isVisible: { show: true }, label: 'Is Default Address' },
+
+          // 📞 Phone
+          phoneNumber: { isVisible: { show: true }, label: 'Phone Number' },
+
+          // 💰 Charges & Payment
+          deliveryCharges: { isVisible: { show: true, list: true }, label: 'Delivery Charges' },
+          totalPayable: { isVisible: { show: true, list: true }, label: 'Total Payable Amount' },
+          paymentMethod: { isVisible: { show: true, list: true }, label: 'Payment Method' },
+
+          // ⏱️ Timestamps
+          createdAt: { isVisible: { show: false, list: false }, label: 'Order Created At' },
+          updatedAt: { isVisible: { show: false, list: false }, label: 'Order Last Updated At' },
+
+          // ✅ Editable: Order Status
+          orderStatus: {
+            label: 'Order Status',
+            isVisible: { list: true, show: true, edit: true },
+            availableValues: [
+              { value: 'CONFIRMED', label: 'Confirmed' },
+              { value: 'SHIPPED', label: 'Shipped' },
+              { value: 'DELIVERED', label: 'Delivered' },
+              { value: 'CANCELLED', label: 'Cancelled' },
+              { value: 'EXPIRED', label: 'Expired' },
+            ],
+          },
+        },
+
+        actions: {
+          new: { isAccessible: false },
+          delete: { isAccessible: false },
+          edit: {
+            isAccessible: true,
+            before: async (request) => {
+              // 🛡️ Prevent updating anything other than orderStatus
+              if (request.payload) {
+                request.payload = { orderStatus: request.payload.orderStatus };
+              }
+              return request;
+            },
+          },
         },
       },
     },

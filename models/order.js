@@ -1,59 +1,63 @@
 import mongoose from "mongoose";
-import Counter from "./count.js";
 
-// Order Schema
-const orderSchema = new mongoose.Schema({
-  orderId: {
-    type: Number,
-    unique: true,
-  },
-  customer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Customer",
-    required: true,
-  },
-  deliveryLocation: {
-    doorNumber: { type: Number, required: true },
-    landmark: { type: String, required: true },
-    address: { type: String, required: true },
-    AddressMode: { type: String, enum: ["Work", "Home", "other"] },
-  },
-  items: [
-    {
-      item: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-        required: true,
-      },
-      count: { type: Number, required: true },
-    },
-  ],
-  status: {
+const ProductSchema = new mongoose.Schema({
+  _id: mongoose.Schema.Types.ObjectId,
+  productName: String,
+  image: String,
+  category: mongoose.Schema.Types.ObjectId,
+  categoryName: String,
+  quantity: Number,
+  isProductAvailabe: Boolean,
+  price: Number,
+  totalCurrentPrice: Number,
+  discountedPrice: Number,
+  totalDiscountedAmount: Number,
+  totalPrice: Number,
+  updatedAt: Date,
+  discountPercentage: Number,
+}, { _id: false });
+
+const DeliveryAddressSchema = new mongoose.Schema({
+  _id: String,
+  type: String,
+  areaOrStreet: String,
+  landmark: String,
+  pincode: Number,
+  isDefault: Boolean,
+  phoneNumber: String
+}, { _id: false });
+
+const OrdersCartDTOSchema = new mongoose.Schema({
+  _id: String,
+  phoneNumber: String,
+  updatedAt: Date,
+  productsList: [ProductSchema],
+  totalItemsInCart: Number,
+  currentTotalPrice: Number,
+  discountedAmount: Number,
+  totalPrice: Number
+}, { _id: false });
+
+const OrderSchema = new mongoose.Schema({
+  _id: String,
+  OrdersCartDTO: OrdersCartDTOSchema,
+  deliveryCharges: Number,
+  totalPayable: Number,
+  deliveryAddress: DeliveryAddressSchema,
+  phoneNumber: String,
+  orderStatus: {
     type: String,
-    enum: ["available", "confirmed", "arriving", "delivered", "cancelled"],
-    default: "available",
+    enum: ['CONFIRMED', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'EXPIRED'],
+    default: 'PENDING'
   },
-  totalPrice: { type: Number, required: true },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  paymentMethod: {
+    type: String,
+    enum: ['CASH_ON_DELIVERY', 'ONLINE', 'UPI'],
+    default: 'CASH_ON_DELIVERY'
+  },
+  createdAt: Date,
+  updatedAt: Date
 });
 
-// Pre-save hook to auto-increment orderId
-orderSchema.pre("save", async function (next) {
-  if (!this.orderId) {
-    try {
-      const counter = await Counter.findOneAndUpdate(
-        { name: "orderId" },
-        { $inc: { value: 1 } },
-        { new: true, upsert: true }
-      );
-      this.orderId = counter.value;
-    } catch (err) {
-      return next(err);
-    }
-  }
-  next();
-});
-
-const Order = mongoose.model("Order", orderSchema);
+const Order = mongoose.model('Order', OrderSchema);
 export default Order;
