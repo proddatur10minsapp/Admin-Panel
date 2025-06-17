@@ -3,28 +3,36 @@ import mongoose from "mongoose";
 import AdminJS from "adminjs";
 import * as AdminJSExpress from "@adminjs/express";
 import * as AdminJSMongoose from "@adminjs/mongoose";
-import * as Models from "./models/index.js"; // Ensure correct path
+import * as Models from "./models/index.js";
+import { Server } from "socket.io";
+import { createServer } from "http";
+import path from "path";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-    /* ──────────── SHARED HOOK ──────────── */
-    async function syncNamesFromCategory(request) {
-      const categoryId = request?.payload?.category;
-      if (!categoryId) return request;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-      const cat = await Models.Category.findById(categoryId)
-        .select('name groupName')
-        .lean();
-      if (!cat) throw new Error('Invalid category selected.');
+/* ──────────── SHARED HOOK ──────────── */
+async function syncNamesFromCategory(request) {
+  const categoryId = request?.payload?.category;
+  if (!categoryId) return request;
 
-      request.payload = {
-        ...request.payload,
-        categoryName: cat.name,
-        groupName: cat.groupName,
-      };
+  const cat = await Models.Category.findById(categoryId)
+    .select('name groupName')
+    .lean();
+  if (!cat) throw new Error('Invalid category selected.');
 
-      return request;
-    }
+  request.payload = {
+    ...request.payload,
+    categoryName: cat.name,
+    groupName: cat.groupName,
+  };
 
-    /* Helper shared by both actions */
+  return request;
+}
+
+/* Helper shared by both actions */
 async function copyCategoryFields(request) {
   const categoryId = request.payload?.category;
   if (categoryId) {
@@ -377,15 +385,76 @@ const admin = new AdminJS({
     },
   },
 },
-  ],
-  rootPath: "/admin",
+  ],  rootPath: "/admin",
 });
 
 // Express Server Setup
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Add Socket.IO client to admin layout
+admin.options.assets = {
+  styles: [],
+  scripts: [
+    'https://cdn.socket.io/4.0.1/socket.io.min.js',
+    '/notification.js'
+  ],
+};
+
 const adminRouter = AdminJSExpress.buildRouter(admin);
 app.use(admin.options.rootPath, adminRouter);
 
-app.listen(2025, () => {
+// Keep track of last checked order time
+let lastOrderCheck = new Date();
+
+// Function to check for new orders
+async function checkNewOrders() {
+  try {
+    const newOrders = await Models.Order.find({
+      createdAt: { $gt: lastOrderCheck },
+      orderStatus: 'PENDING'
+    });
+
+    if (newOrders.length > 0) {
+      newOrders.forEach(order => {
+        io.emit('newOrder', {
+          _id: order._id,
+          phoneNumber: order.phoneNumber,
+          totalPayable: order.totalPayable
+        });
+      });
+    }
+    
+    lastOrderCheck = new Date();
+  } catch (error) {
+    console.error('Error checking for new orders:', error);
+  }
+}
+
+// Set up polling interval (10 seconds)
+setInterval(checkNewOrders, 10000);
+
+// Socket.IO connection handler
+io.on('connection', (socket) => {
+  console.log('Client connected');
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
+
+// Start the server
+httpServer.listen(2025, () => {
   console.log("🚀 Admin Panel running at http://localhost:2025/admin");
 });
