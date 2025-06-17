@@ -12,7 +12,9 @@
         "express": "^4.21.2",
         "mongoose": "^8.15.1",
         "mongoose-sequence": "^6.0.1",
-        "path": "^0.12.7"
+        "path": "^0.12.7",
+        "play-sound": "^1.1.6",
+        "socket.io": "^4.8.1"
     },
     "scripts": {
         "start": "node admin.js",
