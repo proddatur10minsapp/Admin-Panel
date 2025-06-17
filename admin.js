@@ -104,6 +104,7 @@ const admin = new AdminJS({
     {
       resource: Models.Order,
       options: {
+        filterProperties: ['orderStatus', 'phoneNumber', '_id'],
         properties: {
           // 🆔 Order Info
           _id: {
