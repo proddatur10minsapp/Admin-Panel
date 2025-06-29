@@ -317,6 +317,72 @@ const admin = new AdminJS({
         },
       },
     },
+    {
+      resource: Models.giftProduct,
+      options: {
+        properties: {
+          name: { isTitle: true },
+
+          image: {
+            type: 'string',
+            isVisible: { list: true, show: true, edit: true, filter: false },
+          },
+          price: {
+            type: 'number',
+            isVisible: true,
+          },
+
+          discountPrice: {
+            type: 'number',
+            isVisible: true,
+          },
+
+          quantity: {
+            type: 'string',
+            isVisible: true,
+          },
+
+          description: {
+            type: 'richtext',
+            isVisible: { list: false, show: true, edit: true, filter: false },
+          },
+
+          keyFeatures: {
+            type: 'textarea',
+            isVisible: { list: false, show: true, edit: true, filter: false },
+          },
+
+          specifications: {
+            type: 'textarea',
+            isVisible: { list: false, show: true, edit: true, filter: false },
+          },
+
+          stock: {
+            type: 'number',
+            isVisible: true,
+          },
+          startAmount: {
+            type: 'number',
+            isVisible: { list: true, show: true, edit: true, filter: true },
+          },
+          endAmount: {
+            type: 'number',
+            isVisible: { list: true, show: true, edit: true, filter: true },
+          },
+        },
+
+        listProperties: ['name', 'image', 'price', 'discountPrice', 'stock'],
+        showProperties: [
+          'name', 'image', 'gallery', 'price', 'discountPrice',
+          'quantity', 'description', 'keyFeatures', 'specifications', 'stock', 'startAmount','endAmount',
+        ],
+        editProperties: [
+          'name', 'image', 'gallery', 'price', 'discountPrice',
+          'quantity', 'description', 'keyFeatures', 'specifications', 'stock','startAmount','endAmount',
+        ],
+        filterProperties: ['name', 'price', 'stock'],
+      },
+    },
   {
   resource: Models.Banner,   // or Models.Banner
   options : {
