@@ -6,6 +6,7 @@ import Address from "./address.js";
 import TrendCategory from "./trendCategory.js";
 import DeliveryFee from "./deliveryfee.js";
 import Banner from './banner.js'
+import giftProduct from "./giftProduct.js";
 
 
 export {
@@ -16,5 +17,6 @@ export {
   Address,
   TrendCategory,
   DeliveryFee,
-  Banner
+  Banner,
+  giftProduct
 };
