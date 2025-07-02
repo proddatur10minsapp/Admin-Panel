@@ -7,6 +7,7 @@ import TrendCategory from "./trendCategory.js";
 import DeliveryFee from "./deliveryfee.js";
 import Banner from './banner.js'
 import giftProduct from "./giftProduct.js";
+import SingleBanner from "./singleBannerSchema.js";
 
 
 export {
@@ -18,5 +19,6 @@ export {
   TrendCategory,
   DeliveryFee,
   Banner,
-  giftProduct
+  giftProduct,
+  SingleBanner
 };

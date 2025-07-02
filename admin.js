@@ -451,6 +451,41 @@ const admin = new AdminJS({
     },
   },
 },
+{
+  resource: Models.SingleBanner,
+  options: {
+    properties: {
+      image: {
+        type: 'string',
+        isRequired: true,
+        isVisible: { list: true, show: true, edit: true, filter: true },
+      },
+      createdAt: { isVisible: { list: true, show: true, edit: false } },
+      updatedAt: { isVisible: { list: true, show: true, edit: false } },
+      _id: { isVisible: false },
+    },
+    actions: {
+      new: {
+        isAccessible: async () => {
+          const count = await Models.SingleBanner.countDocuments();
+          return count === 0; // ⛔️ Block new if one already exists
+        },
+        before: async (request) => request,
+      },
+      edit: {
+        isAccessible: true,
+        before: async (request) => request,
+      },
+      delete: {
+        isAccessible: false, // ⛔️ Prevent deletion
+      },
+      bulkDelete: {
+        isAccessible: false, // ⛔️ Prevent bulk deletion
+      },
+    },
+  },
+},
+
   ],  rootPath: "/admin",
 });
 
