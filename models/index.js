@@ -8,6 +8,7 @@ import DeliveryFee from "./deliveryfee.js";
 import Banner from './banner.js'
 import giftProduct from "./giftProduct.js";
 import SingleBanner from "./singleBannerSchema.js";
+import Pincode from "./Pincode.js"
 
 
 export {
@@ -20,5 +21,6 @@ export {
   DeliveryFee,
   Banner,
   giftProduct,
-  SingleBanner
+  SingleBanner,
+  Pincode
 };

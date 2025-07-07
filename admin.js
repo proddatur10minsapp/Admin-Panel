@@ -383,6 +383,20 @@ const admin = new AdminJS({
         filterProperties: ['name', 'price', 'stock'],
       },
     },
+    {
+      resource: Models.Pincode,
+      options: {
+        properties: {
+          pincodes: {
+            type: 'array',
+            isVisible: { list: true, edit: true, filter: true, show: true },
+          },
+          createdAt: { isVisible: false },
+          updatedAt: { isVisible: false },
+        },
+        listProperties: ['city', 'state', 'pincodes', 'isActive'],
+      }
+    },
   {
   resource: Models.Banner,   // or Models.Banner
   options : {
