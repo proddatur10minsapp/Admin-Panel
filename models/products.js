@@ -17,6 +17,7 @@ const productSchema = new mongoose.Schema({
   stock: { type: Number, required: true },
   category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
   groupName: { type: String }, // <- add groupName field
+  hide: { type: Boolean, default: false , required: true },
 });
 
 // Pre-save hook to auto set productId and groupName
