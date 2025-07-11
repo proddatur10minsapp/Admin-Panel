@@ -5,6 +5,10 @@ const DeliveryFeeSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  GiftWrapFee: {
+    type: Number,
+    required: true,
+  },
 });
 
 const DeliveryFee = mongoose.model('delivery_fee', DeliveryFeeSchema);
