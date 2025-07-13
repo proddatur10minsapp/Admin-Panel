@@ -93,6 +93,9 @@ const admin = new AdminJS({
           groupName: {
             isVisible: { list: true, show: true, edit: false, filter: true, new: false },
           },
+          categoryName: {
+            isVisible: { list: true, show: true, edit: false, filter: true, new: false },
+          },
         },
       },
     },
